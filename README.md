@@ -22,19 +22,19 @@ Note : You cannot mix `restframework.serializer.ModelSerializer` with this class
 (However all instance of ModelSerializer should be replaceable)
 
 
-##Config
+## Config
 configurations can be changed as following:
 ```python
 from queryset_serializer.serializers import Config
 Config.meta_class.{setting} = {new_value}
 ```
 
-these are the relevant settings : \
+these are the relevant settings : 
 - prefetch_to_attr_prefix , What string will be used as prefix.
 - prefetch_listing , How the prefetch is done (Options: PrefetchToAttrSerializerList, PrefetchSerializerList)
 
 ### prefetch_listing
-there are 2 options for the prefetch_listing. (Located in `queryset_serializer.serializers.model`)\
+there are 2 options for the prefetch_listing. (Located in `queryset_serializer.serializers.model`)
 - `PrefetchToAttrSerializerList` will prefetch/select relations and use the `to_attr` attribute of the `Prefetch` class
 - `PrefetchSerializerList` will only prefetch/select relations
 
