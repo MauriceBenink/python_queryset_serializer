@@ -5,6 +5,12 @@
 
 This package adds a serializer to ensure all models in the serializers get properly prefetched or selected
 
+
+## installation
+```
+pip install queryset-serializer
+```
+
 ## Usage
 
 Simply install the package into your project and import the serializer
