@@ -1,3 +1,6 @@
+[![Downloads](https://img.shields.io/pypi/dm/queryset-serializer.svg?color=orange)](https://pypi.python.org/pypi/queryset-serializer)
+[![Latest Version](https://img.shields.io/pypi/v/queryset-serializer.svg)](https://pypi.python.org/pypi/queryset-serializer)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/queryset-serializer.svg)](https://pypi.python.org/pypi/queryset-serializer)
 ## QuerysetSerializer
 
 This package adds a serializer to ensure all models in the serializers get properly prefetched or selected
