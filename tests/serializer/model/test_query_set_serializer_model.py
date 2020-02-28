@@ -1,5 +1,6 @@
 import pytest
 from django.db.models import Prefetch
+
 from queryset_serializer.db.models import SerializerPrefetch
 from queryset_serializer.serializers import DefaultMetaQuerySetSerializer
 from queryset_serializer.serializers.model import (PrefetchSerializerList,

@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.models import User as AuthUser
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch
+
 from queryset_serializer.serializers import DefaultMetaQuerySetSerializer
 
 from .queryset_serializer_classes import (AuthUserSerializer,

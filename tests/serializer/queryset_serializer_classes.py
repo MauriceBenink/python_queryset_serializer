@@ -2,8 +2,9 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.models import User as AuthUser
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from queryset_serializer.serializers import QuerySetSerializer
 from rest_framework import serializers
+
+from queryset_serializer.serializers import QuerySetSerializer
 
 
 class Position(models.Model):

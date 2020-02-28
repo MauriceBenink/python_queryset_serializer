@@ -1,8 +1,11 @@
 import os
+import sys
 
 from django import setup
 from django.conf import settings
 from django.core.management.commands.migrate import Command as migrate
+
+sys.path.append('/package/')
 
 
 def pytest_configure():
@@ -11,7 +14,6 @@ def pytest_configure():
             'django.contrib.admin',
             'django.contrib.sessions',
             'django.contrib.messages',
-            'raven.contrib.django.raven_compat',
             'rest_framework',
             'django.contrib.auth',
             'django.contrib.contenttypes',

@@ -1,6 +1,7 @@
 import pytest
 from django.db.models import Prefetch
 from django.db.models.query import ModelIterable
+
 from queryset_serializer.db.models import SerializerPrefetch
 
 

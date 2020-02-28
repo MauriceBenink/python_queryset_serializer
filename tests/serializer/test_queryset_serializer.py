@@ -1,4 +1,5 @@
 import pytest
+
 from queryset_serializer.db.models import SerializerPrefetch
 from queryset_serializer.serializers import (DefaultMetaQuerySetSerializer,
                                              QuerySetMetaSerializer,
