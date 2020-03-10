@@ -1,8 +1,8 @@
 from django.db import models
+from rest_framework import serializers
 
 from queryset_serializer.db.models import SerializerPrefetch
 from queryset_serializer.serializers.model import PrefetchToAttrSerializerList
-from rest_framework import serializers
 
 
 def get_meta(cls):
@@ -36,6 +36,25 @@ class _QuerySetSerializer(serializers.ModelSerializer):
     pass
 
 
+def check_parent(self):
+    parent_is_not_none = self.parent is not None
+    parent_is_not_instance = not isinstance(self.parent, (Config.meta_class.base_serializer_class,
+                                                          Config.meta_class.list_serializer_class))
+    return parent_is_not_none and parent_is_not_instance
+
+
+class QuerySetListSerializer(serializers.ListSerializer):
+    def get_attribute(self, curr_obj):
+        if check_parent(self):
+            curr_obj = self.child._check_value(curr_obj, True)
+        return super().get_attribute(curr_obj)
+
+    def to_representation(self, data):
+        if check_parent(self):
+            data = self.child._check_value(data, True)
+        return super().to_representation(data)
+
+
 class DefaultMetaQuerySetSerializer:
     """
     Class with default values for PrefetchMeta in case values/class aren't specified
@@ -47,7 +66,7 @@ class DefaultMetaQuerySetSerializer:
     prefetch_class = SerializerPrefetch
 
     # List serializer class
-    list_serializer_class = serializers.ListSerializer
+    list_serializer_class = QuerySetListSerializer
 
     # if it is a instance of this class then Prefetching can be applied
     base_serializer_class = _QuerySetSerializer
@@ -157,6 +176,11 @@ class QuerySetMetaSerializer(serializers.SerializerMetaclass):
 class QuerySetSerializer(_QuerySetSerializer, metaclass=QuerySetMetaSerializer):
     # attribute that stores the relations of the serializer
     database_relations = {'select': [], 'prefetch': []}
+
+    def to_representation(self, instance):
+        if check_parent(self):
+            instance = self._check_value(instance, False)
+        return super().to_representation(instance)
 
     @classmethod
     def _check_value(cls, value, multi_model=True):

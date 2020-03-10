@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.models import User as AuthUser
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch
+from rest_framework import serializers
 
 from queryset_serializer.serializers import DefaultMetaQuerySetSerializer
 
@@ -190,3 +191,76 @@ class TestQuerySetSerializerWithModels:
             ]
 
             assert len(fetch_keys) == len(prefetch) == len(set(fetch_keys) & set(prefetch))
+
+    test_combining_with_normal_serializer_data = [
+        (ContentTypeSerializer, 'content_type_many'),
+        (PermissionSerializer, 'permission_many'),
+        (AuthUserSerializer, 'user_many'),
+        (GroupSerializer, 'group_many')
+    ]
+
+    @pytest.mark.parametrize('serializer_class,model', test_combining_with_normal_serializer_data)
+    @pytest.mark.django_db()
+    def test_combining_with_normal_serializer(self, serializer_class, model):
+        class TestSerializer(serializers.Serializer):
+            multi = serializer_class(many=True)
+            single = serializer_class()
+
+        qs = getattr(self, model)
+
+        serializer = TestSerializer(dict(
+            multi=qs,
+            single=qs.first()
+        ))
+        assert serializer.data['multi']
+        assert serializer.data['single']
+
+        serializer = TestSerializer(
+            [dict(
+                multi=qs,
+                single=qs.first()
+            ), dict(
+                multi=qs,
+                single=qs.first()
+            ), dict(
+                multi=qs,
+                single=qs.first()
+            )], many=True
+        )
+        for data in serializer.data:
+            assert data['multi']
+            assert data['single']
+
+    @pytest.mark.django_db()
+    def test_combining_multiple_with_normal_serializer(self):
+        class TestSerializer(serializers.Serializer):
+            c_multi = ContentTypeSerializer(many=True)
+            c_single = ContentTypeSerializer()
+            p_multi = PermissionSerializer(many=True)
+            p_single = PermissionSerializer()
+            a_multi = AuthUserSerializer(many=True)
+            a_single = AuthUserSerializer()
+            g_multi = GroupSerializer(many=True)
+            g_single = GroupSerializer()
+
+        serializer = TestSerializer(dict(
+            c_multi=ContentType.objects.all(),
+            c_single=ContentType.objects.first(),
+            p_multi=Permission.objects.all(),
+            p_single=Permission.objects.first(),
+            a_multi=AuthUser.objects.all(),
+            a_single=AuthUser.objects.first(),
+            g_multi=Group.objects.all(),
+            g_single=Group.objects.first(),
+        ))
+
+        # import pdb; pdb.set_trace()
+
+        assert serializer.data['c_multi']
+        assert serializer.data['c_single']
+        assert serializer.data['p_multi']
+        assert serializer.data['p_single']
+        assert serializer.data['a_multi']
+        assert serializer.data['a_single']
+        assert serializer.data['g_multi']
+        assert serializer.data['g_single']
