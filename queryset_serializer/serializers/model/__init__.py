@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Prefetch
 
 
 class _BasePrefetchSerializerList:
@@ -108,9 +109,14 @@ class PrefetchToAttrSerializerList(_BasePrefetchSerializerList):
         """
         prefetch_obj = self.queryset_prefetch_lookups[prefetch]
         prefetch_index = self.queryset._prefetch_related_lookups.index(self.queryset_prefetch_lookups[prefetch])
-        self.queryset._prefetch_related_lookups[prefetch_index] = self.prefetch_class(
-            prefetch_obj.prefetch_to, queryset=prefetch_obj.queryset, prefix=self.prefix
-        )
+        if isinstance(prefetch_obj, Prefetch):
+            self.queryset._prefetch_related_lookups[prefetch_index] = self.prefetch_class(
+                prefetch_obj.prefetch_to, queryset=prefetch_obj.queryset, prefix=self.prefix
+            )
+        elif isinstance(prefetch_obj, str):
+            self.queryset._prefetch_related_lookups[prefetch_index] = self.prefetch_class(
+                prefetch_obj, prefix=self.prefix
+            )
 
     def _edit_related_lookups(self, queryset):
         """
